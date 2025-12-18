@@ -22,7 +22,7 @@ while True:
 
     cv2.imshow("GestureCamino - macOS Camera", frame)
 
-    # Press 'x' to exit
+    # Press esc to exit
     if cv2.waitKey(1) & 0xFF == 27:
         break
 
