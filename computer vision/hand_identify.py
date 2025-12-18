@@ -102,18 +102,34 @@ if __name__ == "__main__":
 
     print("Starting camera...")
     
-    # Platform-specific camera setup
+# Platform-specific camera setup
     system = platform.system()
-    camera_index = 0 
+    
+    # 1. Try Camera 0 first
     if system == "Darwin":
-        cap = cv2.VideoCapture(camera_index, cv2.CAP_AVFOUNDATION)
+        cap = cv2.VideoCapture(0, cv2.CAP_AVFOUNDATION)
     elif system == "Windows":
-        cap = cv2.VideoCapture(camera_index, cv2.CAP_DSHOW)
+        cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
     else:
-        cap = cv2.VideoCapture(camera_index)
+        cap = cv2.VideoCapture(0)
 
+    # 2. Check if Camera 0 actually works
+    if cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
+            print("Camera 0 opened but failed to grab frame. Switching to Camera 1...")
+            cap.release()
+            # 3. If Camera 0 failed, try Camera 1
+            if system == "Darwin":
+                cap = cv2.VideoCapture(1, cv2.CAP_AVFOUNDATION)
+            elif system == "Windows":
+                cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
+            else:
+                cap = cv2.VideoCapture(1)
+    
+    # Final check
     if not cap.isOpened():
-        print(f"ERROR: Camera could not be opened.")
+        print("ERROR: Could not open any camera.")
         exit()
 
     try:
