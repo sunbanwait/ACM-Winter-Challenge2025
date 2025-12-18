@@ -1,7 +1,15 @@
 import cv2
+import platform
 
-print("Starting macOS camera...")
+system=platform.system()
 
+if system == "Darwin":  # macOS
+    cap = cv2.VideoCapture(0, cv2.CAP_AVFOUNDATION)
+elif system == "Windows":
+    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+else:  # Linux
+    cap = cv2.VideoCapture(0)
+    
 # Use macOS native camera backend
 cap = cv2.VideoCapture(1, cv2.CAP_AVFOUNDATION)
 
