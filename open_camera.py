@@ -9,10 +9,8 @@ elif system == "Windows":
     cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 else:  # Linux
     cap = cv2.VideoCapture(0)
-    
-# Use macOS native camera backend
-cap = cv2.VideoCapture(1, cv2.CAP_AVFOUNDATION)
 
+print("Starting camera... ")
 print("Camera opened:", cap.isOpened())
 
 if not cap.isOpened():
