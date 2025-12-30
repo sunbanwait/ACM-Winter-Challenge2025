@@ -1,3 +1,4 @@
+#import
 import cv2
 import pyautogui
 import time
@@ -8,7 +9,7 @@ import mediapipe as mp
 from mediapipe.tasks.python import vision
 from mediapipe.tasks.python import BaseOptions
 
-# ================== CONFIG ==================
+#Configuration
 SCREEN_W, SCREEN_H = pyautogui.size()
 
 GAIN_X = 6.5
@@ -26,13 +27,13 @@ ESCAPE_TIME = 1.0
 SHOW_PREVIEW = True
 PREVIEW_W, PREVIEW_H = 420, 260
 
-# ================== STATE ==================
+#State Variables
 anchor_x = None
 anchor_y = None
 last_click_time = 0
 escape_start = None
 
-# ================== CAMERA ==================
+# Initalize Camera
 def open_camera():
     system = platform.system()
     backend = (
@@ -63,7 +64,7 @@ def open_camera():
 
     raise RuntimeError("No usable camera found")
 
-# ================== MEDIAPIPE (TASKS API) ==================
+# Mediapipe Face Landmarker
 base_options = BaseOptions(
     model_asset_path="face_landmarker.task"
 )
@@ -76,7 +77,7 @@ options = vision.FaceLandmarkerOptions(
 
 face_landmarker = vision.FaceLandmarker.create_from_options(options)
 
-# ================== MAIN ==================
+# Main
 cap = open_camera()
 
 print("[INFO] Head control ACTIVE")
@@ -123,7 +124,7 @@ while True:
             cv2.waitKey(1)
         continue
 
-    # -------- MOVE CURSOR --------
+    # Cursor Movement
     dx = (nx - anchor_x) * GAIN_X * SCREEN_W
     dy = (ny - anchor_y) * GAIN_Y * SCREEN_H
 
@@ -132,13 +133,13 @@ while True:
 
     pyautogui.moveTo(screen_x, screen_y)
 
-    # -------- SCROLL --------
+    # Scroll Movement
     if ny < anchor_y - SCROLL_TILT:
         pyautogui.scroll(SCROLL_AMOUNT)
     elif ny > anchor_y + SCROLL_TILT:
         pyautogui.scroll(-SCROLL_AMOUNT)
 
-    # -------- CLICK (MOUTH OPEN) --------
+    # Click Movement(Open Mouth)
     upper_lip = lm[13].y
     lower_lip = lm[14].y
     mouth_open = lower_lip - upper_lip
@@ -148,7 +149,7 @@ while True:
             pyautogui.click()
             last_click_time = time.time()
 
-    # -------- EXIT SAFETY --------
+    # Exit
     if screen_x < ESCAPE_MARGIN and screen_y < ESCAPE_MARGIN:
         if escape_start is None:
             escape_start = time.time()
@@ -158,7 +159,7 @@ while True:
     else:
         escape_start = None
 
-    # -------- PREVIEW --------
+    # Preview
     if SHOW_PREVIEW:
         cx = int(nx * frame.shape[1])
         cy = int(ny * frame.shape[0])
@@ -167,6 +168,8 @@ while True:
         preview = cv2.resize(overlay, (PREVIEW_W, PREVIEW_H))
         cv2.imshow("Head Control", preview)
         cv2.waitKey(1)
-
+#Cleanup-Release the camera resource
 cap.release()
+
+#Close OpenCV Windows
 cv2.destroyAllWindows()
