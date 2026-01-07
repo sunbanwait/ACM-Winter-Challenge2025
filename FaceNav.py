@@ -1,10 +1,10 @@
 #import
-import cv2
-import pyautogui
+import cv2 #opening camera and processing image frams
+import pyautogui #allows python to take control on operating system, mouse, and keyboard
 import time
-import platform
-import numpy as np
-import mediapipe as mp
+import platform #identifies operating system platform - macOs, windows, linux
+import numpy as np #math calculations, coordinates for mouse, calculates movement using nose as origin point
+import mediapipe as mp #ML model pre-trained
 
 from mediapipe.tasks.python import vision
 from mediapipe.tasks.python import BaseOptions
